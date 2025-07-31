@@ -1,9 +1,9 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { genSaltSync, hashSync } from 'bcrypt';
-import { Model } from 'mongoose';
+import { Model, ProjectionType } from 'mongoose';
 import { CreateUserDto } from 'src/modules/users/dto';
-import { IUser, User } from 'src/schemas/user.schema';
+import { IUser, User, userPublicFields } from 'src/schemas/user.schema';
 
 @Injectable()
 export class UsersService {
@@ -20,31 +20,31 @@ export class UsersService {
       ...body,
       password: hashedPassword,
     });
-    return this.findById(createdUser._id.toString());
+    return this.findById(createdUser._id.toString(), userPublicFields);
   }
 
-  async findById(id: string): Promise<IUser> {
-    const user = await this.userModel.findById(id);
+  async findById(id: string, projection: ProjectionType<any> = {}): Promise<IUser> {
+    const user = await this.userModel.findById(id, projection);
     if (!user) {
       throw new NotFoundException('User not found');
     }
     return user;
   }
 
-  async findByEmail(email: string): Promise<IUser> {
-    const user = await this.userModel.findOne({ email: email });
+  async findByEmail(email: string, projection: ProjectionType<any> = {}): Promise<IUser> {
+    const user = await this.userModel.findOne({ email }, projection);
     if (!user) {
       throw new NotFoundException('User not found');
     }
     return user;
   }
 
-  async deleteUser(id: string): Promise<IUser> {
+  async deleteUser(id: string): Promise<{ user: string }> {
     const user = await this.userModel.findByIdAndDelete(id);
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    return user;
+    return { user: user._id.toString() };
   }
 
   private hashPassword(password: string): string {

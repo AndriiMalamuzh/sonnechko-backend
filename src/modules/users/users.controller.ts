@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreateUserDto } from 'src/modules/users/dto';
 import { UsersService } from 'src/modules/users/users.service';
-import { IUser, User } from 'src/schemas/user.schema';
+import { IUser, User, userPublicFields } from 'src/schemas/user.schema';
 
 @Controller('users')
 export class UsersController {
@@ -20,20 +20,20 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Return user', type: User })
   @Get(':id')
   async findById(@Param('id') id: string): Promise<IUser> {
-    return await this.usersService.findById(id);
+    return await this.usersService.findById(id, userPublicFields);
   }
 
   @ApiOperation({ summary: 'Get user by email' })
   @ApiResponse({ status: 200, description: 'Return user', type: User })
   @Get('/email/:email')
   async findByEmail(@Param('email') email: string): Promise<IUser> {
-    return await this.usersService.findByEmail(email);
+    return await this.usersService.findByEmail(email, userPublicFields);
   }
 
   @ApiOperation({ summary: 'Delete user by id' })
   @ApiResponse({ status: 200, description: 'Deleted user', type: User })
   @Delete(':id')
-  async deleteUser(@Param('id') id: string): Promise<IUser> {
+  async deleteUser(@Param('id') id: string): Promise<{ user: string }> {
     return await this.usersService.deleteUser(id);
   }
 }

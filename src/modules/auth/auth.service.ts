@@ -7,7 +7,7 @@ import { CreateUserDto } from 'src/modules/users/dto';
 import { UsersService } from 'src/modules/users/users.service';
 import { IToken } from 'src/schemas/token.schema';
 import { IUserAgent } from 'src/schemas/user-agent.schema';
-import { IUser } from 'src/schemas/user.schema';
+import { IUser, userPublicFields } from 'src/schemas/user.schema';
 
 @Injectable()
 export class AuthService {
@@ -29,11 +29,18 @@ export class AuthService {
     body: LoginDto,
     agent: IUserAgent
   ): Promise<{ user: IUser; accessToken: string; refreshToken: IToken }> {
-    const user = await this.usersService.findByEmail(body.email);
+    const user = await this.usersService.findByEmail(body.email, {
+      ...userPublicFields,
+      password: 1,
+    });
     if (!user || !compareSync(body.password, user.password)) {
       throw new UnauthorizedException('Email or password is incorrect');
     }
-    return this.generateTokens(user, agent);
+    const userWithoutPassword = await this.usersService.findById(
+      user._id.toString(),
+      userPublicFields
+    );
+    return this.generateTokens(userWithoutPassword, agent);
   }
 
   async refreshTokens(
@@ -45,7 +52,7 @@ export class AuthService {
     if (token.exp < Date.now()) {
       throw new UnauthorizedException();
     }
-    const user = await this.usersService.findById(token.user.toString());
+    const user = await this.usersService.findById(token.user.toString(), userPublicFields);
     return this.generateTokens(user, agent);
   }
 
