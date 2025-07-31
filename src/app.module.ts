@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { UsersModule } from 'src/users/users.module';
 import { ConfigModule } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 import * as Joi from 'joi';
+import { TokensModule } from 'src/modules/tokens/tokens.module';
+import { UsersModule } from 'src/modules/users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import * as Joi from 'joi';
       autoIndex: true,
     }),
     UsersModule,
+    TokensModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

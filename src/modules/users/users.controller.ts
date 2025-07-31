@@ -1,0 +1,39 @@
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { CreateUserDto } from 'src/modules/users/dto';
+import { UsersService } from 'src/modules/users/users.service';
+import { IUser, User } from 'src/schemas/user.schema';
+
+@Controller('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @ApiOperation({ summary: 'Create new user' })
+  @ApiBody({ type: CreateUserDto })
+  @ApiResponse({ status: 200, description: 'Return created user', type: User })
+  @Post()
+  async createUser(@Body() body: CreateUserDto): Promise<IUser> {
+    return await this.usersService.save(body);
+  }
+
+  @ApiOperation({ summary: 'Get user by id' })
+  @ApiResponse({ status: 200, description: 'Return user', type: User })
+  @Get(':id')
+  async findById(@Param('id') id: string): Promise<IUser> {
+    return await this.usersService.findById(id);
+  }
+
+  @ApiOperation({ summary: 'Get user by email' })
+  @ApiResponse({ status: 200, description: 'Return user', type: User })
+  @Get('/email/:email')
+  async findByEmail(@Param('email') email: string): Promise<IUser> {
+    return await this.usersService.findByEmail(email);
+  }
+
+  @ApiOperation({ summary: 'Delete user by id' })
+  @ApiResponse({ status: 200, description: 'Deleted user', type: User })
+  @Delete(':id')
+  async deleteUser(@Param('id') id: string): Promise<IUser> {
+    return await this.usersService.deleteUser(id);
+  }
+}
