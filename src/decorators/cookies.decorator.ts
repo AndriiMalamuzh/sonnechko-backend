@@ -1,7 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
 
-// Extend the Express Request interface to include cookies
 interface RequestWithCookies extends Request {
   cookies: {
     [key: string]: string;

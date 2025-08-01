@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { Credential } from 'src/decorators';
 import { CreateUserDto } from 'src/modules/users/dto';
 import { UsersService } from 'src/modules/users/users.service';
 import { IUser, User, userPublicFields } from 'src/schemas/user.schema';
@@ -15,7 +14,6 @@ export class UsersController {
   })
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({ status: 200, description: 'Return created user', type: User })
-  @Credential('users_create')
   @Post()
   async createUser(@Body() body: CreateUserDto): Promise<IUser> {
     return await this.usersService.save(body);
@@ -26,7 +24,6 @@ export class UsersController {
     description: 'Only admin with `users_update` credential',
   })
   @ApiResponse({ status: 200, description: 'Return user', type: User })
-  @Credential('users_update')
   @Get(':id')
   async findById(@Param('id') id: string): Promise<IUser> {
     return await this.usersService.findById(id, userPublicFields);
@@ -45,7 +42,6 @@ export class UsersController {
   })
   @ApiResponse({ status: 200, description: 'Deleted user', type: User })
   @Delete(':id')
-  @Credential('users_remove')
   async deleteUser(@Param('id') id: string): Promise<{ user: string }> {
     return await this.usersService.deleteUser(id);
   }
