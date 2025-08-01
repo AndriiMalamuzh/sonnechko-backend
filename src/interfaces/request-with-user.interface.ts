@@ -1,6 +1,6 @@
 import { Request } from 'express';
-import { User } from '../schemas/user.schema';
+import { JwtPayload } from 'src/interfaces/jwt-payload.interface';
 
 export interface RequestWithUser extends Request {
-  user: User;
+  user: JwtPayload;
 }
