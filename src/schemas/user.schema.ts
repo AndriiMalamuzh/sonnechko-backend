@@ -18,6 +18,10 @@ export class User {
   @Prop({ default: 'user' })
   role: 'user' | 'admin';
 
+  @ApiProperty({ default: [], type: [String] })
+  @Prop({ default: [] })
+  credentials: string[];
+
   @ApiProperty({ default: 'current_timestamp', required: false })
   @Prop({ index: true, default: Date.now })
   date_created?: number;
@@ -32,6 +36,7 @@ export const UserSchema = SchemaFactory.createForClass(User);
 export const userPublicFields = {
   email: 1,
   role: 1,
+  credentials: 1,
   date_created: 1,
   date_updated: 1,
 };

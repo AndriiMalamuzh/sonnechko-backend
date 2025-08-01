@@ -10,16 +10,15 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
-import { Cookie, Public, UserAgent } from 'src/decorators';
+import { Cookie, UserAgent } from 'src/decorators';
+import { SignResponseInterface } from 'src/interfaces';
 import { AuthService } from 'src/modules/auth/auth.service';
 import { LoginDto } from 'src/modules/auth/dto';
-import { SignResponseInterface } from 'src/modules/auth/interfaces';
 import { CreateUserDto } from 'src/modules/users/dto';
 import { IToken } from 'src/schemas/token.schema';
 import { IUserAgent } from 'src/schemas/user-agent.schema';
 import { IUser } from 'src/schemas/user.schema';
 
-@Public()
 @Controller('auth')
 export class AuthController {
   constructor(
