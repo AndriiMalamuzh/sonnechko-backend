@@ -49,7 +49,7 @@ export class AuthService {
   ): Promise<{ user: IUser; accessToken: string; refreshToken: IToken }> {
     const token = await this.tokensService.findByToken(refreshToken);
     await this.tokensService.deleteToken(refreshToken);
-    if (token.exp < Date.now()) {
+    if (token.exp < new Date()) {
       throw new UnauthorizedException();
     }
     const user = await this.usersService.findById(token.user.toString(), userPublicFields);

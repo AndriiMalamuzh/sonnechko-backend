@@ -18,12 +18,12 @@ export class TokensService {
     const token = await this.tokenModel.findOne({ user: user._id, user_agent: agent });
     if (token) {
       token.token = v4();
-      token.exp = expirationDate.getTime();
+      token.exp = expirationDate;
       return await token.save();
     } else {
       return await this.tokenModel.create({
         token: v4(),
-        exp: expirationDate.getTime(),
+        exp: expirationDate,
         user: user._id,
         user_agent: agent,
       });

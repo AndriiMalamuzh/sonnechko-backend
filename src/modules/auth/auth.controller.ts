@@ -117,7 +117,7 @@ export class AuthController {
     res.cookie('refreshToken', result.refreshToken?.token, {
       httpOnly: true,
       sameSite: 'lax',
-      expires: new Date(result?.refreshToken?.exp),
+      expires: result?.refreshToken?.exp,
       secure: this.configService.get('NODE_ENV') !== 'dev',
       path: '/',
     });
