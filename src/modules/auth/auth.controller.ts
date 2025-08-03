@@ -68,6 +68,8 @@ export class AuthController {
     this.setRefreshTokenToCookies(result, res);
   }
 
+  @ApiOperation({ summary: 'Logout user' })
+  @ApiResponse({ status: 200, description: 'User successfully logged out' })
   @Get('logout')
   async logout(@Cookie('refreshToken') refreshToken: string, @Res() res: Response): Promise<void> {
     if (!refreshToken) {
