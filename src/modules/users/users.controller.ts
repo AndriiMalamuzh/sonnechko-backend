@@ -1,6 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { Credential } from 'src/decorators';
+import { Credential, CurrentUser } from 'src/decorators';
+import { JwtAuthGuard } from 'src/guards';
+import { JwtPayload } from 'src/interfaces';
 import { CreateUserDto } from 'src/modules/users/dto';
 import { UsersService } from 'src/modules/users/users.service';
 import { IUser, User, userPublicFields } from 'src/schemas/user.schema';
@@ -21,6 +23,21 @@ export class UsersController {
     return await this.usersService.save(body);
   }
 
+  @ApiOperation({ summary: 'Get current user' })
+  @ApiResponse({ status: 200, description: 'Return user', type: User })
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  async getMe(@CurrentUser() user: JwtPayload): Promise<IUser> {
+    return await this.usersService.findById(user.id, userPublicFields);
+  }
+
+  @ApiOperation({ summary: 'Get user by email' })
+  @ApiResponse({ status: 200, description: 'Return user', type: User })
+  @Get('/email/:email')
+  async findByEmail(@Param('email') email: string): Promise<IUser> {
+    return await this.usersService.findByEmail(email, userPublicFields);
+  }
+
   @ApiOperation({
     summary: 'Get user by id',
     description: 'Only admin with `users_update` credential',
@@ -30,13 +47,6 @@ export class UsersController {
   @Get(':id')
   async findById(@Param('id') id: string): Promise<IUser> {
     return await this.usersService.findById(id, userPublicFields);
-  }
-
-  @ApiOperation({ summary: 'Get user by email' })
-  @ApiResponse({ status: 200, description: 'Return user', type: User })
-  @Get('/email/:email')
-  async findByEmail(@Param('email') email: string): Promise<IUser> {
-    return await this.usersService.findByEmail(email, userPublicFields);
   }
 
   @ApiOperation({
