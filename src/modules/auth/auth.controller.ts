@@ -14,6 +14,7 @@ import { Cookie, UserAgent } from 'src/decorators';
 import { SignResponseInterface } from 'src/interfaces';
 import { AuthService } from 'src/modules/auth/auth.service';
 import { LoginDto } from 'src/modules/auth/dto';
+import { TokensService } from 'src/modules/tokens/tokens.service';
 import { CreateUserDto } from 'src/modules/users/dto';
 import { IToken } from 'src/schemas/token.schema';
 import { IUserAgent } from 'src/schemas/user-agent.schema';
@@ -23,6 +24,7 @@ import { IUser } from 'src/schemas/user.schema';
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
+    private readonly tokensService: TokensService,
     private readonly configService: ConfigService
   ) {}
 
@@ -64,6 +66,21 @@ export class AuthController {
       throw new Error('Something went wrong');
     }
     this.setRefreshTokenToCookies(result, res);
+  }
+
+  @Get('logout')
+  async logout(@Cookie('refreshToken') refreshToken: string, @Res() res: Response): Promise<void> {
+    if (!refreshToken) {
+      res.sendStatus(HttpStatus.OK);
+      return;
+    }
+    await this.tokensService.deleteToken(refreshToken);
+    res.cookie('refreshToken', '', {
+      httpOnly: true,
+      secure: true,
+      expires: new Date(),
+    });
+    res.sendStatus(HttpStatus.OK);
   }
 
   @ApiOperation({ summary: 'Refresh tokens' })
