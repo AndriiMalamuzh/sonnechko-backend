@@ -73,7 +73,7 @@ export class AuthController {
   @Get('logout')
   async logout(@Cookie('refreshToken') refreshToken: string, @Res() res: Response): Promise<void> {
     if (!refreshToken) {
-      res.sendStatus(HttpStatus.OK);
+      res.status(HttpStatus.OK).json({ message: 'OK' });
       return;
     }
     await this.tokensService.deleteToken(refreshToken);
@@ -82,7 +82,7 @@ export class AuthController {
       secure: true,
       expires: new Date(),
     });
-    res.sendStatus(HttpStatus.OK);
+    res.status(HttpStatus.OK).json({ message: 'OK' });
   }
 
   @ApiOperation({ summary: 'Refresh tokens' })
