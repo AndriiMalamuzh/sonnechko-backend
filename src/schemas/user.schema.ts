@@ -14,6 +14,14 @@ export class User {
   @Prop({ required: true })
   password: string;
 
+  @ApiProperty({ required: true, type: String })
+  @Prop({ required: true })
+  first_name: string;
+
+  @ApiProperty({ required: true, type: String })
+  @Prop({ required: true })
+  last_name: string;
+
   @ApiProperty({ default: 'user', enum: ['user', 'admin'] })
   @Prop({ default: 'user' })
   role: 'user' | 'admin';
@@ -35,6 +43,8 @@ export const UserSchema = SchemaFactory.createForClass(User);
 
 export const userPublicFields = {
   email: 1,
+  first_name: 1,
+  last_name: 1,
   role: 1,
   credentials: 1,
   date_created: 1,

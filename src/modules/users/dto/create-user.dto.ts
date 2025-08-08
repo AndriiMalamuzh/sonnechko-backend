@@ -16,4 +16,18 @@ export class CreateUserDto {
     type: String,
   })
   password: string;
+
+  @IsString()
+  @ApiProperty({
+    required: true,
+    type: String,
+  })
+  first_name: string;
+
+  @IsString()
+  @ApiProperty({
+    required: true,
+    type: String,
+  })
+  last_name: string;
 }
